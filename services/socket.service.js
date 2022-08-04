@@ -46,7 +46,7 @@ async function emitToUser(type, data, userId) {
   const socket = await _getUserSocket(userId);
   if (socket) socket.emit(type, data);
   else {
-    console.log('first bee');
+    console.log('try to emitToUsser again');
   }
 }
 
