@@ -9,23 +9,9 @@ function connectSockets(http, session) {
     },
   });
   gIo.on('connection', (socket) => {
-    // console.log('New socket', socket.id);
+    console.log('New socket', socket.id);
     socket.on('disconnect', (socket) => {
       // console.log('Someone disconnected');
-    });
-    socket.on('chat id', (id) => {
-      if (socket.Id === id) return;
-      if (socket.Id) {
-        socket.leave(socket.Id);
-      }
-      socket.join(id);
-      socket.Id = id;
-    });
-    socket.on('chat newMsg', (msg) => {
-      // emits to all sockets:
-      // gIo.emit('chat addMsg', msg)
-      // emits only to sockets in the same room
-      // gIo.to(socket.Id).emit('chat addMsg', msg);
     });
     socket.on('notify-toggle-friends', async ({ to, from, msg }) => {
       if (!from.chatsIds.some((id) => to.chatsIds.includes(id))) {
@@ -39,16 +25,15 @@ function connectSockets(http, session) {
         await userService.update(from);
       }
       emitToUser('toggeled-friends', { msg, friend: from }, to._id);
-      emitToUser('load-user', '', from._id);
+      emitToUser('load-user', { friend: from }, from._id);
     });
 
     socket.on('add-msg', ({ msg, to, chat }) => {
-      console.log(to._id);
       emitToUser('msg-notify', { chat, msg }, to._id);
     });
 
     socket.on('set-user-socket', (userId) => {
-      // console.log(`Setting (${socket.id}) socket.userId = ${userId}`);
+      console.log(`Setting (${socket.id}) socket.userId = ${userId}`);
       socket.userId = userId;
     });
     socket.on('unset-user-socket', () => {
@@ -61,13 +46,14 @@ async function emitToUser(type, data, userId) {
   const socket = await _getUserSocket(userId);
   if (socket) socket.emit(type, data);
   else {
-    console.log('User socket not found');
+    console.log('first bee');
   }
 }
 
 async function _getUserSocket(userId) {
   const sockets = await _getAllSockets();
   const socket = sockets.find((s) => s.userId == userId);
+  console.log('socket', socket);
   return socket;
 }
 async function _getAllSockets() {
