@@ -25,7 +25,7 @@ function connectSockets(http, session) {
         await userService.update(from);
       }
       emitToUser('toggeled-friends', { msg, friend: from }, to._id);
-      emitToUser('load-user', { friend: from }, from._id);
+      emitToUser('load-user', '', from._id);
     });
 
     socket.on('add-msg', ({ msg, to, chat }) => {
