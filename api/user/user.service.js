@@ -85,7 +85,9 @@ async function add(user) {
       friendsIds: [],
       chatsIds: [],
       isAdmin: user.isAdmin || false,
+      imgUrl: '',
     };
+    userToAdd.imgUrl = getRandomImg();
     const collection = await dbService.getCollection('user');
     await collection.insertOne(userToAdd);
     return userToAdd;
@@ -93,4 +95,17 @@ async function add(user) {
     console.error('cannot insert user', err);
     throw err;
   }
+}
+
+function getRandomImg() {
+  const gender = Math.random() > 0.5 ? 'women' : 'men';
+  const num = getRandomInt(1, 50);
+  const url = `https://randomuser.me/api/portraits/${gender}/${num}.jpg`;
+  return url;
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
 }
