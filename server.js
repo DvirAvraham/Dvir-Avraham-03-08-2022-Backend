@@ -30,12 +30,15 @@ if (process.env.NODE_ENV === 'production') {
 const authRoutes = require('./api/auth/auth.routes');
 const userRoutes = require('./api/user/user.routes');
 const chatRoutes = require('./api/chat/chat.routes');
+const { connectSockets } = require('./services/socket.service');
+
+const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware');
+app.all('*', setupAsyncLocalStorage);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 
-const { connectSockets } = require('./services/socket.service');
 connectSockets(http, session);
 
 app.get('/**', (req, res) => {

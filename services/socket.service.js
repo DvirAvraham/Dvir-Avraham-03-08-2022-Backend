@@ -9,10 +9,6 @@ function connectSockets(http, session) {
     },
   });
   gIo.on('connection', (socket) => {
-    console.log('New socket', socket.id);
-    socket.on('disconnect', (socket) => {
-      // console.log('Someone disconnected');
-    });
     socket.on('notify-toggle-friends', async ({ to, from, msg }) => {
       if (!from.chatsIds.some((id) => to.chatsIds.includes(id))) {
         const chat = await chatService.createChat([
@@ -33,7 +29,6 @@ function connectSockets(http, session) {
     });
 
     socket.on('set-user-socket', (userId) => {
-      console.log(`Setting (${socket.id}) socket.userId = ${userId}`);
       socket.userId = userId;
     });
     socket.on('unset-user-socket', () => {
@@ -45,15 +40,11 @@ function connectSockets(http, session) {
 async function emitToUser(type, data, userId) {
   const socket = await _getUserSocket(userId);
   if (socket) socket.emit(type, data);
-  else {
-    console.log('try to emitToUsser again');
-  }
 }
 
 async function _getUserSocket(userId) {
   const sockets = await _getAllSockets();
   const socket = sockets.find((s) => s.userId == userId);
-  console.log('socket', socket);
   return socket;
 }
 async function _getAllSockets() {
