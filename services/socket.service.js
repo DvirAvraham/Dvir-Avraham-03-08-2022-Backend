@@ -28,6 +28,10 @@ function connectSockets(http, session) {
       emitToUser('msg-notify', { chat, msg }, to._id);
     });
 
+    socket.on('sign-up', ({ userId }) => {
+      broadcast('load-users', '', userId);
+    });
+
     socket.on('set-user-socket', (userId) => {
       socket.userId = userId;
     });
@@ -40,6 +44,11 @@ function connectSockets(http, session) {
 async function emitToUser(type, data, userId) {
   const socket = await _getUserSocket(userId);
   if (socket) socket.emit(type, data);
+}
+async function broadcast(type, data, userId) {
+  const excludedSocket = await _getUserSocket(userId);
+  if (!excludedSocket) return;
+  excludedSocket.broadcast.emit(type, data);
 }
 
 async function _getUserSocket(userId) {
@@ -55,4 +64,5 @@ async function _getAllSockets() {
 module.exports = {
   connectSockets,
   emitToUser,
+  broadcast,
 };

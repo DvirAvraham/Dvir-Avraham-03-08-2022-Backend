@@ -1,4 +1,5 @@
 const authService = require('./auth.service');
+const utilService = require('../../services/util.service');
 
 module.exports = {
   login,
@@ -7,9 +8,12 @@ module.exports = {
 };
 
 async function login(req, res) {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
+  const secureUsername = utilService.secureStr(username);
+  const securePassword = utilService.secureStr(password);
+
   try {
-    const user = await authService.login(username, password);
+    const user = await authService.login(secureUsername, securePassword);
     req.session.user = user;
     res.json(user);
   } catch (err) {
@@ -19,10 +23,13 @@ async function login(req, res) {
 }
 
 async function signup(req, res) {
+  const { username, password, fullname } = req.body;
+  const secureUsername = utilService.secureStr(username);
+  const securePassword = utilService.secureStr(password);
+  const secureFullname = utilService.secureStr(fullname);
   try {
-    const { username, password, fullname } = req.body;
-    await authService.signup(username, password, fullname);
-    const user = await authService.login(username, password);
+    await authService.signup(secureUsername, securePassword, secureFullname);
+    const user = await authService.login(secureUsername, securePassword);
     req.session.user = user;
     res.json(user);
   } catch (err) {
