@@ -67,6 +67,7 @@ async function update(user) {
       friendsIds: user.friendsIds,
       chatsIds: user.chatsIds,
       imgUrl: user.imgUrl,
+      isPremium: user.isPremium,
     };
     const collection = await dbService.getCollection('user');
     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave });
@@ -86,6 +87,7 @@ async function add(user) {
       friendsIds: [],
       chatsIds: [],
       isAdmin: user.isAdmin || false,
+      isPremium: Math.random() > 0.5 ? true : false,
       imgUrl: '',
     };
     userToAdd.imgUrl = getRandomImg();
