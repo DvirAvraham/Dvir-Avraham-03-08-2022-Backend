@@ -16,8 +16,8 @@ function connectSockets(http, session) {
     socket.on('notify-toggle-friends', async ({ to, from, msg }) => {
       if (!from.chatsIds.some((id) => to.chatsIds.includes(id))) {
         const chat = await chatService.createChat([
-          { _id: to._id, fullname: to.fullname },
-          { _id: from._id, fullname: from.fullname },
+          { _id: to._id, fullname: to.fullname, imgUrl: to.imgUrl },
+          { _id: from._id, fullname: from.fullname, imgUrl: from.imgUrl },
         ]);
         to.chatsIds.push(chat._id);
         from.chatsIds.push(chat._id);

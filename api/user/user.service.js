@@ -66,6 +66,7 @@ async function update(user) {
       isAdmin: user.isAdmin,
       friendsIds: user.friendsIds,
       chatsIds: user.chatsIds,
+      imgUrl: user.imgUrl,
     };
     const collection = await dbService.getCollection('user');
     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave });
