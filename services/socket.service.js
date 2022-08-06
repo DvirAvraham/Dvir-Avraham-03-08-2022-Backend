@@ -32,6 +32,19 @@ function connectSockets(http, session) {
       broadcast('load-users', '', userId);
     });
 
+    socket.on('user-removed', async ({ userId, fromId }) => {
+      const users = await userService.query();
+      await users.forEach(async (user) => {
+        if (!user) return;
+        if (user.friendsIds.includes(userId)) {
+          const idx = user.friendsIds.findIndex((id) => id === userId);
+          user.friendsIds.splice(idx, 1);
+          await userService.update(user);
+        }
+      });
+      broadcast('fetch-data', '', fromId);
+    });
+
     socket.on('set-user-socket', (userId) => {
       socket.userId = userId;
     });
